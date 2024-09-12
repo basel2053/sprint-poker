@@ -48,7 +48,7 @@ func setupRouter() *gin.Engine {
 		defer conn.Close()
 		for {
 			conn.WriteMessage(websocket.TextMessage, []byte("Hello, WS!"))
-			time.Sleep(time.Second)
+			time.Sleep(5 * time.Second)
 		}
 	})
 

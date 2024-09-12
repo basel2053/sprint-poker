@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
+import { Button, Card } from '@/components';
 import './App.css';
-import Button from './components/Button';
 
 function App() {
   useEffect(() => {
@@ -20,6 +20,7 @@ function App() {
   return (
     <>
       <h1>Poker</h1>
+      <Card />
       <Button $primary>Paw pew</Button>
     </>
   );
