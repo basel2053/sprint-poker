@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Card } from './Card';
+import { Box } from '@chakra-ui/react';
 
 interface GuessCardProps {
   value?: string | number;
@@ -18,7 +19,9 @@ export const GuessCard: React.FC<GuessCardProps> = ({ value }) => {
       transition="transform 0.6s"
       transform={isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'}
     >
-      {value}
+      <Box transform={isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'}>
+        {isFlipped ? value : '??'}
+      </Box>
     </Card>
   );
 };
