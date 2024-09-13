@@ -1,13 +1,12 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
+import { Root } from './pages/root';
+
 const AppRouter = () => {
   const router = createBrowserRouter([
     {
       path: '/',
-      lazy: async () => {
-        const { Layout } = await import('./pages/layout');
-        return { Component: Layout };
-      },
+      element: <Root />,
       children: [
         {
           path: '/',
@@ -17,7 +16,7 @@ const AppRouter = () => {
           },
         },
         {
-          path: 'room',
+          path: 'room/:roomId',
           lazy: async () => {
             return { Component: () => <h1>Room</h1> };
           },

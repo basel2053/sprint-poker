@@ -1,3 +1,14 @@
-export const Home = () => <h1>Home Page!</h1>;
+import { Box, Button, Heading } from '@chakra-ui/react';
 
-// rgb(229, 229, 229)
+export const Home = () => (
+  <>
+    <Box textAlign="center">
+      <Heading as="h1" my={5}>
+        Sprint Poker
+      </Heading>
+      <Button variant="outline" color="teal.300">
+        Create A Room!
+      </Button>
+    </Box>
+  </>
+);
