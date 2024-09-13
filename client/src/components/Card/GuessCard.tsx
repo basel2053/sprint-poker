@@ -1,7 +1,7 @@
 import { Box, Text } from '@chakra-ui/react';
 import { useState } from 'react';
 
-const GuessCard = () => {
+export const GuessCard = () => {
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
   const handleToggle = () => {
     setIsFlipped(!isFlipped);
@@ -26,5 +26,3 @@ const GuessCard = () => {
     </Box>
   );
 };
-
-export default GuessCard;

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Button, Card, GuessCard } from '@/components';
+import AppProvider from './provider';
+import AppRouter from './router';
 
 function App() {
   useEffect(() => {
@@ -17,12 +18,9 @@ function App() {
   }, []);
 
   return (
-    <>
-      <h1>Poker</h1>
-      <Card />
-      <GuessCard />
-      <Button $primary>Paw pew</Button>
-    </>
+    <AppProvider>
+      <AppRouter />
+    </AppProvider>
   );
 }
 
