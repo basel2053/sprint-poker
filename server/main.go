@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -47,6 +48,8 @@ func setupRouter() *gin.Engine {
 		}
 		defer conn.Close()
 		for {
+			_, message, _ := conn.ReadMessage()
+			log.Printf("Message %s", message)
 			conn.WriteMessage(websocket.TextMessage, []byte("Hello, WS!"))
 			time.Sleep(5 * time.Second)
 		}

@@ -20,7 +20,8 @@ export const Home = () => {
   const [roomName, setRoomName] = useState('');
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const handleCreate = () => {
+  const handleCreate = (e: React.FormEvent) => {
+    e.preventDefault();
     navigate(`/room/${roomName}`);
     onClose();
   };
@@ -46,13 +47,15 @@ export const Home = () => {
                 placeholder="Room Name"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
+                outlineColor="teal.500"
+                focusBorderColor="teal.400"
               />
             </ModalBody>
             <ModalFooter>
               <Button mr={3} variant="ghost">
                 Close
               </Button>
-              <Button colorScheme="blue" type="submit">
+              <Button colorScheme="teal" type="submit">
                 Create
               </Button>
             </ModalFooter>

@@ -7,6 +7,7 @@ const fibonacciSeries = [0, 1, 2, 3, 5, 8, 13, 21, 34, 55];
 
 export const Room = () => {
   const [estimation, setEstimation] = useState<string | number>('??');
+  const [websocket, setWebsocket] = useState<WebSocket | null>();
   const { roomId } = useParams();
   useEffect(() => {
     const ws = new WebSocket('ws://localhost:5000/ws');
@@ -15,7 +16,7 @@ export const Room = () => {
       ws.onmessage = (message) => {
         console.log('Received message: ', message);
       };
-      ws.send(JSON.stringify({ type: 'message', message: 'Hello There!' }));
+      setWebsocket(ws);
     };
     return () => {
       ws.close();
@@ -24,6 +25,7 @@ export const Room = () => {
 
   const handleSelect = (value: number) => {
     setEstimation(value);
+    websocket?.send(JSON.stringify({ type: 'estimation', value }));
   };
 
   return (
