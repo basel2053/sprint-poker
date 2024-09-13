@@ -18,7 +18,8 @@ const AppRouter = () => {
         {
           path: 'room/:roomId',
           lazy: async () => {
-            return { Component: () => <h1>Room</h1> };
+            const { Room } = await import('./pages/room');
+            return { Component: Room };
           },
         },
         {
