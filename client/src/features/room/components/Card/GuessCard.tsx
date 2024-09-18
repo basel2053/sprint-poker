@@ -4,10 +4,11 @@ import { Box } from '@chakra-ui/react';
 
 interface GuessCardProps {
   value?: string | number;
+  isFlipped: boolean;
+  setIsFlipped: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const GuessCard: React.FC<GuessCardProps> = ({ value }) => {
-  const [isFlipped, setIsFlipped] = useState<boolean>(false);
+export const GuessCard: React.FC<GuessCardProps> = ({ value, isFlipped, setIsFlipped }) => {
   const handleToggle = () => {
     setIsFlipped(!isFlipped);
   };

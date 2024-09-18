@@ -7,8 +7,8 @@ interface CardProps extends CenterProps {
 
 export const Card: React.FC<CardProps> = ({ children, ...rest }) => (
   <Center
-    w="160px"
-    h="240px"
+    w="80px"
+    h="120px"
     as="button"
     pointer="cursor"
     bg={'teal.400'}

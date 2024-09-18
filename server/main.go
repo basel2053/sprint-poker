@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
-	"time"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -33,6 +33,24 @@ var upgrader = websocket.Upgrader{
 // 	}
 // }
 
+var (
+	clients      = make(map[*websocket.Conn]bool)
+	clientsMutex sync.Mutex
+)
+
+func writeMessage(message []byte) {
+	clientsMutex.Lock()
+	defer clientsMutex.Unlock()
+	for client := range clients {
+		err := client.WriteMessage(websocket.TextMessage, message)
+		if err != nil {
+			log.Printf("Error writing to client: %v", err)
+			client.Close()
+			delete(clients, client) // Remove the client on error
+		}
+	}
+}
+
 func setupRouter() *gin.Engine {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
@@ -46,12 +64,23 @@ func setupRouter() *gin.Engine {
 		if err != nil {
 			return
 		}
-		defer conn.Close()
+		clientsMutex.Lock()
+		clients[conn] = true
+		clientsMutex.Unlock()
+
+		defer func() {
+			conn.Close()
+			clientsMutex.Lock()
+			delete(clients, conn)
+			clientsMutex.Unlock()
+		}()
 		for {
-			_, message, _ := conn.ReadMessage()
+			mt, message, err := conn.ReadMessage()
+			if err != nil || mt == websocket.CloseMessage {
+				break
+			}
+			writeMessage(message)
 			log.Printf("Message %s", message)
-			conn.WriteMessage(websocket.TextMessage, []byte("Hello, WS!"))
-			time.Sleep(5 * time.Second)
 		}
 	})
 
