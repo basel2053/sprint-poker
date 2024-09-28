@@ -16,6 +16,8 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
+import { roomAPI } from '@/api';
 import { FormStepper } from '@/components/Others';
 
 const steps = [
@@ -32,9 +34,15 @@ export const Home = () => {
     index: 1,
     count: steps.length,
   });
+
+  const mutation = useMutation({
+    mutationFn: (roomName: string) => roomAPI.createRoom(roomName),
+  });
+
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate(`/room/${roomName}`);
+    mutation.mutate(roomName);
+    // navigate(`/room/${roomName}`);
     onClose();
   };
 
