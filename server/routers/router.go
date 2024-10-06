@@ -20,11 +20,11 @@ func InitRouter() *gin.Engine {
 	})
 
 	apiv1 := r.Group("/v1")
-	apiv1.Use(middlewares.AuthMiddleware())
+	apiv1.Use(middlewares.JwtMiddleware())
 	{
-
 		apiv1.POST("/rooms", v1.CreateRoom)
 
+		apiv1.Use(middlewares.AuthMiddleware())
 		apiv1.GET("/ws", v1.Sockets)
 
 	}
