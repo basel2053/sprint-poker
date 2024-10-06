@@ -1,4 +1,4 @@
 export interface AddRoom {
   name: string;
-  username?: string;
+  displayName?: string;
 }

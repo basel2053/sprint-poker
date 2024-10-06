@@ -28,7 +28,7 @@ const steps = [
 
 export const Home = () => {
   const [roomName, setRoomName] = useState('');
-  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { activeStep, goToNext } = useSteps({
@@ -42,7 +42,7 @@ export const Home = () => {
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
-    mutation.mutate({ name: roomName, username });
+    mutation.mutate({ name: roomName, displayName: name });
     // navigate(`/room/${roomName}`);
     onClose();
   };
@@ -72,9 +72,9 @@ export const Home = () => {
               <Text mb={3}> No need to sign up. Just create a room and start directly.</Text>
               <Input
                 placeholder={activeStep === 2 ? 'Name' : 'Room Name'}
-                value={activeStep === 2 ? username : roomName}
+                value={activeStep === 2 ? name : roomName}
                 onChange={(e) =>
-                  activeStep === 2 ? setUsername(e.target.value) : setRoomName(e.target.value)
+                  activeStep === 2 ? setName(e.target.value) : setRoomName(e.target.value)
                 }
                 outlineColor="teal.500"
                 focusBorderColor="teal.400"

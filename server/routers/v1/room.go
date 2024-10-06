@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,10 +18,16 @@ func CreateRoom(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	_, exists := c.Get("userId")
-	if !exists && room.DisplayName == "" {
-		c.JSON(http.StatusForbidden, gin.H{"message": "You must have an account to create a room."})
+	userId, exists := c.Get("userId")
+	if !exists {
+		if room.DisplayName == "" {
+			c.JSON(http.StatusForbidden, gin.H{"message": "You must have an account to create a room."})
+			return
+		}
+		// create temporary account
+		// userId = the newly created account id
 	}
+	fmt.Println(userId)
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "room created",
 	})
