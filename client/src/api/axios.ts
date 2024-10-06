@@ -5,13 +5,14 @@ import axios, {
   InternalAxiosRequestConfig,
 } from 'axios';
 
-const { VITE_API_URL: apiUrl } = import.meta.env;
+const { VITE_API_URL: apiUrl, VITE_API_VERSION: apiVersion } = import.meta.env;
 
 const axiosInstance = axios.create({
-  baseURL: `http://${apiUrl}`,
+  baseURL: `${apiUrl}/${apiVersion}`,
   headers: {
     Accept: 'application/json, text/plain, */*',
   },
+  withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use(

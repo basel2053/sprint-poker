@@ -2,93 +2,30 @@ package main
 
 import (
 	"log"
-	"net/http"
-	"sync"
+	"log/slog"
+	"os"
+	"strconv"
 
-	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
+	"github.com/basel2053/sprint-poker/config"
+	"github.com/basel2053/sprint-poker/routers"
+	"github.com/joho/godotenv"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
-
-// func CORSMiddleware() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-// 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-// 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-// 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
-//
-// 		if c.Request.Method == "OPTIONS" {
-// 			c.AbortWithStatus(204)
-// 			return
-// 		}
-//
-// 		c.Next()
-// 	}
-// }
-
-var (
-	clients      = make(map[*websocket.Conn]bool)
-	clientsMutex sync.Mutex
-)
-
-func writeMessage(message []byte) {
-	clientsMutex.Lock()
-	defer clientsMutex.Unlock()
-	for client := range clients {
-		err := client.WriteMessage(websocket.TextMessage, message)
-		if err != nil {
-			log.Printf("Error writing to client: %v", err)
-			client.Close()
-			delete(clients, client) // Remove the client on error
-		}
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading env variables")
 	}
-}
-
-func setupRouter() *gin.Engine {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-
-	r.GET("/ws", func(c *gin.Context) {
-		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-		if err != nil {
-			return
-		}
-		clientsMutex.Lock()
-		clients[conn] = true
-		clientsMutex.Unlock()
-
-		defer func() {
-			conn.Close()
-			clientsMutex.Lock()
-			delete(clients, conn)
-			clientsMutex.Unlock()
-		}()
-		for {
-			mt, message, err := conn.ReadMessage()
-			if err != nil || mt == websocket.CloseMessage {
-				break
-			}
-			writeMessage(message)
-			log.Printf("Message %s", message)
-		}
-	})
-
-	// r.Use(CORSMiddleware())
-	return r
+	log.Println("env variables loaded")
+	logLevel, _ := strconv.Atoi(os.Getenv("LOG_LEVEL"))
+	logHandler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: false, Level: slog.Level(logLevel)})
+	logger := slog.New(logHandler)
+	slog.SetDefault(logger)
 }
 
 func main() {
-	r := setupRouter()
-	r.Run(":5000")
+	appConfig := config.InitAppConfig()
+	config.ConnectDB(appConfig.DBUrl)
+	defer config.CloseDB()
+	r := routers.InitRouter()
+	log.Fatal(r.Run(appConfig.HTTPPort))
 }

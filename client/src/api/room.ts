@@ -1,10 +1,12 @@
 import { request } from './axios';
 
+import type { AddRoom } from '@/types/room';
+
 export const roomAPI = {
-  createRoom: (roomName: string) =>
+  createRoom: (roomData: AddRoom) =>
     request({
       url: 'rooms',
       method: 'POST',
-      data: { roomName },
+      data: roomData,
     }),
 };

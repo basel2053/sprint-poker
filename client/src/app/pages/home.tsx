@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { roomAPI } from '@/api';
 import { FormStepper } from '@/components/Others';
+import type { AddRoom } from '@/types/room';
 
 const steps = [
   { title: 'First', description: 'Room Name' },
@@ -27,7 +28,7 @@ const steps = [
 
 export const Home = () => {
   const [roomName, setRoomName] = useState('');
-  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { activeStep, goToNext } = useSteps({
@@ -36,12 +37,12 @@ export const Home = () => {
   });
 
   const mutation = useMutation({
-    mutationFn: (roomName: string) => roomAPI.createRoom(roomName),
+    mutationFn: (room: AddRoom) => roomAPI.createRoom(room),
   });
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
-    mutation.mutate(roomName);
+    mutation.mutate({ name: roomName, username });
     // navigate(`/room/${roomName}`);
     onClose();
   };
@@ -71,9 +72,9 @@ export const Home = () => {
               <Text mb={3}> No need to sign up. Just create a room and start directly.</Text>
               <Input
                 placeholder={activeStep === 2 ? 'Name' : 'Room Name'}
-                value={activeStep === 2 ? name : roomName}
+                value={activeStep === 2 ? username : roomName}
                 onChange={(e) =>
-                  activeStep === 2 ? setName(e.target.value) : setRoomName(e.target.value)
+                  activeStep === 2 ? setUsername(e.target.value) : setRoomName(e.target.value)
                 }
                 outlineColor="teal.500"
                 focusBorderColor="teal.400"
