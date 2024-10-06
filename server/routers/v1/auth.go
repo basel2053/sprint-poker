@@ -14,14 +14,22 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-type credentials struct {
-	Email       string `json:"email" validate:"required,email"`
-	Password    string `json:"password" validate:"required,min=8,max=32"`
+type userRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=8,max=32"`
+}
+
+type signupRequest struct {
+	userRequest
 	DisplayName string `json:"display_name" validate:"required,max=50"`
 }
 
-func signup(c *gin.Context) {
-	user := &credentials{}
+type loginRequest struct {
+	userRequest
+}
+
+func Signup(c *gin.Context) {
+	user := &signupRequest{}
 	if err := c.BindJSON(user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -66,4 +74,8 @@ func signup(c *gin.Context) {
 	})
 }
 
-func login(c *gin.Context) {}
+func Login(c *gin.Context) {}
+
+func Logout(c *gin.Context) {}
+
+func RefreshToken(c *gin.Context) {}

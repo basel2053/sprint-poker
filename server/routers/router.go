@@ -20,8 +20,12 @@ func InitRouter() *gin.Engine {
 	})
 
 	apiv1 := r.Group("/v1")
-	apiv1.Use(middlewares.JwtMiddleware())
 	{
+		apiv1.POST("/signup", v1.Signup)
+		apiv1.POST("/login", v1.Login)
+		apiv1.POST("/logout", v1.Logout)
+
+		apiv1.Use(middlewares.JwtMiddleware())
 		apiv1.POST("/rooms", v1.CreateRoom)
 
 		apiv1.Use(middlewares.AuthMiddleware())
